@@ -1,6 +1,15 @@
 import sys
 sys.path.append('py-libs')
-import requests, json
+import requests, json, argparse
+
+parser = argparse.ArgumentParser(description='Checks the status of Go agents.')
+parser.add_argument('--hostname', help='The hostname for the Go server', required=True)
+parser.add_argument('--port', help='The port for the Go server', required=False, default=80)
+parser.add_argument('--username', help='The username to use for API requests', required=False, default="")
+parser.add_argument('--password', help='The password to use for API requests', required=False, default="")
+args = vars(parser.parse_args())
+
+
 
 def isAgentLowOnSpace(agentSpace, minSpace):
 	agentSpace = agentSpace.replace(" ","").replace("GB","")
@@ -10,7 +19,7 @@ def isAgentLowOnSpace(agentSpace, minSpace):
 		return float(agentSpace) < minSpace
 		
 
-goAgentsUrl = "http://localhost:8000/go/api/agents" 
+goAgentsUrl = "http://newgo/go/api/agents" 
 response = requests.get(goAgentsUrl, auth=('build', 'd3V4321'))
 
 agentsList = response.json()
