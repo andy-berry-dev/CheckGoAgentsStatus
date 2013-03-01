@@ -1,0 +1,23 @@
+
+apply plugin: 'base'
+apply from: 'wrapper.gradle'
+
+
+task bootstrapStatusChecker, {
+	doFirst {
+		buildDir.mkdir()
+		ant.get(src: 'https://github.com/andyberry88/CheckGoAgentsStatus/archive/master.zip', dest:"${buildDir}/CheckGoAgentsStatus.zip")
+		copy {
+			from zipTree("${buildDir}/CheckGoAgentsStatus.zip")
+			into projectDir
+			includeEmptyDirs = false
+			eachFile { file ->
+				file.path = file.path.replace("CheckGoAgentsStatus-master","CheckGoAgentsStatus")
+			}
+		}
+	}
+}
+
+clean {
+	delete "CheckGoAgentsStatus"
+}
