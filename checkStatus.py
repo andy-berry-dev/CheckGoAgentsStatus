@@ -21,12 +21,15 @@ exitCode = 0
 def isAgentLowOnSpace(agentSpace, minSpace):
 	agentSpace = agentSpace.replace(" ","").replace("GB","")
 	if "MB" in agentSpace:
-		return true
+		return True
 	else:
-		return float(agentSpace) < float(minSpace)
-		
+		try:
+			return float(agentSpace) < float(minSpace)
+		except ValueError:
+			return False
+
 def print_err(*args):
-    sys.stderr.write(' '.join(map(str,args)) + '\n')
+	sys.stderr.write(' '.join(map(str,args)) + '\n')
 
 goAgentsUrl = "http://" + goHostname + ":" + str(goPort) + "/go/api/agents" 
 if (goUser != "" and goPass != ""):
@@ -42,17 +45,17 @@ for agent in agentsList:
 	agentIp = agent["ip_address"]
 	agentFreeSpace = agent["free_space"]
 	agentUuid = agent["uuid"]
-	
+
 	if isAgentLowOnSpace(agentFreeSpace, minAgentSpace):
 		exitCode = 1
 		print "Agent " + agentName + " has " + agentFreeSpace + " free space which is too low - disabling it."
 		disableAgentUrl = "http://" + goHostname + ":" + str(goPort) + "/go/api/agents/" + agentUuid + "/disable"
-	
+
 		if (goUser != "" and goPass != ""):
 			response = requests.post(disableAgentUrl, auth=(goUser, goPass))
 		else:
 			response = requests.post(disableAgentUrl)
-			
+
 		if (response.status_code != requests.codes.ok):
 			exitCode = 1
 			print_err("Error while trying to disable " + agentName, "using URL " + disableAgentUrl, response.text)
