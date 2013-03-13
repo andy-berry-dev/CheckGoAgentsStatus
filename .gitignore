@@ -1,2 +1,4 @@
 .project
 .gradle
+*$py.class
+.DS_Store
